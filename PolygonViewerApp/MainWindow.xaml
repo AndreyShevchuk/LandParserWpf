@@ -1,0 +1,74 @@
+﻿<Window x:Class="PolygonViewerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:local="clr-namespace:PolygonViewerApp"
+        mc:Ignorable="d"
+        Title="Polygon Viewer App" Height="450" Width="800"
+        MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Command="{Binding OpenFile}"/>
+                <MenuItem Header="_Close" HorizontalAlignment="Left" Height="25" Width="140" Click="MenuItem_Click_1"/>
+                <MenuItem Header="_Send" HorizontalAlignment="Left" Height="24" Width="140">
+                    <MenuItem Header="_E-mail&#xD;&#xA;&#xD;&#xA;" HorizontalAlignment="Left" Height="24" Width="140"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <StackPanel Orientation="Horizontal">
+            <RichTextBox DataContext="{Binding SelecLandPlot, UpdateSourceTrigger = PropertyChanged}" Width="160" BorderThickness="0" IsEnabled="False">
+                <RichTextBox.Document>
+                    <FlowDocument>
+                        <Paragraph>
+                            Кадастровый номер
+                        </Paragraph>
+                        <Paragraph>
+                            <TextBlock Text="{Binding Path = LandInfo.CadastralZoneNumber, UpdateSourceTrigger = PropertyChanged}" x:Name="CadastralZoneNumber"></TextBlock>
+                            <TextBlock>:</TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.CadastralQuarterNumber, UpdateSourceTrigger = PropertyChanged}" x:Name="CadastralQuarterNumber"></TextBlock>
+                            <TextBlock>:</TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.ParcelID, UpdateSourceTrigger = PropertyChanged}" x:Name="ParcelID"></TextBlock>
+                        </Paragraph>
+                        <Paragraph>
+                            Расположение:
+                        </Paragraph>
+                        <Paragraph>
+
+                            <TextBlock Text="{Binding Path = LandInfo.Settlement, UpdateSourceTrigger = PropertyChanged}" x:Name="Settlement"></TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.Region, UpdateSourceTrigger = PropertyChanged}" x:Name="Region"></TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.StreetType, UpdateSourceTrigger = PropertyChanged }" x:Name="StreetType"></TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.StreetName, UpdateSourceTrigger = PropertyChanged}" x:Name="StreetName"></TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.Building, UpdateSourceTrigger = PropertyChanged}" x:Name="Building"></TextBlock>
+                        </Paragraph>
+                        <Paragraph>
+                            Размер:
+                            <TextBlock Text="{Binding Path = LandInfo.Size, UpdateSourceTrigger = PropertyChanged}" x:Name="Size"></TextBlock>
+                            <TextBlock Text="{Binding Path = LandInfo.MeasurementUnit, UpdateSourceTrigger = PropertyChanged}" x:Name="MeasurementUnit"></TextBlock>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox.Document>
+            </RichTextBox>
+            <Canvas x:Name="Canvas"
+                SizeChanged="Canvas_SizeChanged">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction 
+                        Command="{Binding GetUIElement}"
+                        CommandParameter="{Binding Children, ElementName=Canvas}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="CanvasTranslateTransform"></TranslateTransform>
+                        <ScaleTransform x:Name="CanvasScaleTransform"></ScaleTransform>
+                    </TransformGroup>
+                </Canvas.RenderTransform>
+            </Canvas>
+        </StackPanel>
+    </DockPanel>
+</Window>
