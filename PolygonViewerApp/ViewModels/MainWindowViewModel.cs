@@ -62,26 +62,29 @@ namespace PolygonViewerApp.ViewModels
             {
                 foreach (var poliline in item.Polylines)
                 {
-                    poliline.MouseEnter += (s, e) =>
+
+                    poliline.MouseLeave += (s, e) =>
+                    {
+                        LandPlot.stat = true;
+                    };
+
+                    poliline.MouseDown += (s, e) =>
                     {
                         if (LandPlot.stat)
                         {
-                            LandPlot.stat = !LandPlot.stat;
+                            LandPlot.stat = false;
+                            if (SelecLandPlot != null)
+                            {
+                                foreach (var poliline2 in SelecLandPlot.Polylines)
+                                {
+                                    poliline2.Stroke = Brushes.Red;
+                                }
+                            }
                             SelecLandPlot = item;
                             foreach (var poliline2 in item.Polylines)
                             {
                                 poliline2.Stroke = Brushes.Gray;
                             }
-                        }
-                    };
-
-                    poliline.MouseLeave += (s, e) =>
-                    {
-                        LandPlot.stat = true;
-                        SelecLandPlot = item;
-                        foreach (var poliline2 in item.Polylines)
-                        {
-                            poliline2.Stroke = Brushes.Red;
                         }
                     };
                 }
