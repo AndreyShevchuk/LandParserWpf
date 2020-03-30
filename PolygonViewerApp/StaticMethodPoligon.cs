@@ -8,7 +8,7 @@ namespace System.Windows.Controls
 {
     public static class StaticMethodPoligon
     {
-        public static void AddRange(this UIElementCollection uIElementCollection, ICollection<System.Windows.Shapes.Polyline> uIElements)
+        public static void AddRange(this UIElementCollection uIElementCollection, ICollection<System.Windows.Shapes.Polygon> uIElements)
         {
             foreach (var item in uIElements)
             {

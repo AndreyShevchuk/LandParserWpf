@@ -15,19 +15,21 @@ namespace PolygonViewerApp
     {
         public UkrainianCadastralExchangeFile data { get; set; }
 
-        private System.Windows.Point corectPoint;
-        private Dictionary<string, System.Windows.Point> points;
-        public Dictionary<string, System.Windows.Shapes.Polyline> polilines;
+        public System.Windows.Point СorectPoint;
+        public Dictionary<string, System.Windows.Shapes.Polyline> Polilines { get; set; }
+        public Dictionary<string, System.Windows.Point> Points { get; set; }
 
+        public Dictionary<string, List <System.Windows.Point>> PolilinePoints { get; set; }
+        
         public PraseInfoLandsPlot(UkrainianCadastralExchangeFile data)
         {
             this.data = data;
-            points = new Dictionary<string, System.Windows.Point>();
-            polilines = new Dictionary<string, System.Windows.Shapes.Polyline>();
-            GetCortctPointPoint();
+            Polilines = new Dictionary<string, System.Windows.Shapes.Polyline>();
+            Points = new Dictionary<string, System.Windows.Point>();
+            PolilinePoints = new Dictionary<string, List<System.Windows.Point>>();
+            GetCortctPoints();
             GetPolilines();
         }
-
         public ICollection<LandPlot> GetLandPlots()
         {
             var landsPlotsColections = new List<LandPlot>();
@@ -37,27 +39,41 @@ namespace PolygonViewerApp
                 {
                     var LandInfo = new LandInfo(item1, data);
                     var tempBuferLines = new List<System.Windows.Shapes.Polyline>();
+                    var tempPints = new List<System.Windows.Point>();
+
                     foreach (var item2 in item.MetricInfo.Externals.Boundary.Lines.Line)
                     {
-                        tempBuferLines.Add(polilines[item2.ULID]);
+                        tempBuferLines.Add(Polilines[item2.ULID]);
                     }
                     landsPlotsColections.Add(new LandPlot(tempBuferLines, LandInfo));
                 }
             }
             return landsPlotsColections;
         }
-        private void GetCortctPointPoint()
+        private void GetCortctPoints()
         {
             var minX = Double.MaxValue;
             var minY = Double.MaxValue;
 
+            var maxX = Double.MinValue;
+            var maxY = Double.MinValue;
+
             foreach (var point in data.InfoPart.MetricInfo.PointInfo.Point)
             {
+                maxX = Math.Max(maxX, point.X);
+                maxY = Math.Max(maxY, point.Y);
+
                 minX = Math.Min(minX, point.X);
                 minY = Math.Min(minY, point.Y);
-                points[point.PN] = new System.Windows.Point(point.X, point.Y);
             }
-            corectPoint = new System.Windows.Point(minX, minY);
+            
+            СorectPoint = new System.Windows.Point((minX), (minY));
+
+            foreach (var point in data.InfoPart.MetricInfo.PointInfo.Point)
+            {
+                Points[point.PN] = new System.Windows.Point(point.X - СorectPoint.X, point.Y - СorectPoint.Y);
+            }
+           
         }
         private void GetPolilines()
         {
@@ -69,15 +85,24 @@ namespace PolygonViewerApp
                     StrokeThickness = 2,
                     Points = new PointCollection()
                 };
-
                 foreach (var pointId in polyline.Points.P)
                 {
-                    var point = points[pointId];
-                    var y = point.X - corectPoint.X;
-                    var x = point.Y - corectPoint.Y;
-                    graphicsPolyline.Points.Add(new System.Windows.Point(x, y));
+                    graphicsPolyline.Points.Add(Points[pointId]);
+                    AddPointsInPolilinePoints(polyline.ULID, Points[pointId]);
                 }
-                polilines[polyline.ULID] = graphicsPolyline;
+                Polilines[polyline.ULID] = graphicsPolyline;
+            }
+        }
+
+        private void AddPointsInPolilinePoints(string key, System.Windows.Point point)
+        {
+            if (!PolilinePoints.ContainsKey(key))
+            {
+                PolilinePoints[key] = new List<System.Windows.Point>();
+            }
+            else
+            {
+                PolilinePoints[key].Add(point);
             }
         }
     }

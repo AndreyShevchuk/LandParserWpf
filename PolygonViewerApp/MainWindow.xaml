@@ -6,10 +6,10 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:PolygonViewerApp"
         mc:Ignorable="d"
-        Title="Polygon Viewer App" Height="450" Width="800"
-        MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove">
+        Title="Polygon Viewer App" WindowState="Maximized"
+        MouseMove="Canvas_MouseMove">
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
+        <Menu Panel.ZIndex="100" DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" Command="{Binding OpenFile}"/>
                 <MenuItem Header="_Close" HorizontalAlignment="Left" Height="25" Width="140" Click="MenuItem_Click_1"/>
@@ -18,14 +18,24 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <StackPanel Orientation="Horizontal">
-            <RichTextBox DataContext="{Binding SelecLandPlot, UpdateSourceTrigger = PropertyChanged}" Width="160" BorderThickness="0" IsEnabled="False">
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="287*"/>
+                <RowDefinition Height="199*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <RichTextBox  Panel.ZIndex="100"  Grid.Column="0"  HorizontalAlignment="Left" DataContext="{Binding SelecLandPlot, UpdateSourceTrigger = PropertyChanged}" Width="160" BorderThickness="0" IsEnabled="False" Grid.RowSpan="2" Margin="0,-2,0,2" >
                 <RichTextBox.Document>
                     <FlowDocument>
                         <Paragraph>
                             Кадастровый номер
                         </Paragraph>
                         <Paragraph>
+                            <TextBlock Text="{Binding Path = Scale.ScaleParam, UpdateSourceTrigger = PropertyChanged}" x:Name="Scale" Width="47"></TextBlock>
                             <TextBlock Text="{Binding Path = LandInfo.CadastralZoneNumber, UpdateSourceTrigger = PropertyChanged}" x:Name="CadastralZoneNumber"></TextBlock>
                             <TextBlock>:</TextBlock>
                             <TextBlock Text="{Binding Path = LandInfo.CadastralQuarterNumber, UpdateSourceTrigger = PropertyChanged}" x:Name="CadastralQuarterNumber"></TextBlock>
@@ -44,31 +54,50 @@
                             <TextBlock Text="{Binding Path = LandInfo.Building, UpdateSourceTrigger = PropertyChanged}" x:Name="Building"></TextBlock>
                         </Paragraph>
                         <Paragraph>
-                            Размер:
-                            <TextBlock Text="{Binding Path = LandInfo.Size, UpdateSourceTrigger = PropertyChanged}" x:Name="Size"></TextBlock>
-                            <TextBlock Text="{Binding Path = LandInfo.MeasurementUnit, UpdateSourceTrigger = PropertyChanged}" x:Name="MeasurementUnit"></TextBlock>
+                            <Run Text="Размер: "/>
+                            <InlineUIContainer>
+                                <TextBlock Text="{Binding LandInfo.Size, UpdateSourceTrigger=PropertyChanged}" x:Name="Size"/>
+                            </InlineUIContainer>
+                            <Run Text=" "/>
+                            <InlineUIContainer>
+                                <TextBlock Text="{Binding LandInfo.MeasurementUnit, UpdateSourceTrigger=PropertyChanged}" x:Name="MeasurementUnit"/>
+                            </InlineUIContainer>
+                            <InlineUIContainer>
+                            </InlineUIContainer>
                         </Paragraph>
                     </FlowDocument>
                 </RichTextBox.Document>
             </RichTextBox>
-            <Canvas x:Name="Canvas"
-                SizeChanged="Canvas_SizeChanged">
+
+            <Canvas Grid.Column="1" x:Name="Canvas"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="{Binding Path = ScaleCanvasParam.CenterX }" Height="{Binding Path = ScaleCanvasParam.CenterY }" Grid.RowSpan="2">
 
                 <i:Interaction.Triggers>
+
                     <i:EventTrigger EventName="Loaded">
                         <i:InvokeCommandAction 
                         Command="{Binding GetUIElement}"
                         CommandParameter="{Binding Children, ElementName=Canvas}" />
                     </i:EventTrigger>
+
                 </i:Interaction.Triggers>
 
                 <Canvas.RenderTransform>
-                    <TransformGroup>
+                    <TransformGroup x:Name="TransformGroupe">
                         <TranslateTransform x:Name="CanvasTranslateTransform"></TranslateTransform>
-                        <ScaleTransform x:Name="CanvasScaleTransform"></ScaleTransform>
+                        <ScaleTransform CenterX="{Binding Path = ScaleCanvasParam.CenterX, UpdateSourceTrigger = PropertyChanged}" CenterY="{Binding Path = ScaleCanvasParam.CenterX}" 
+                                        ScaleX="{Binding Path= Scale.CoefficientIncrease, UpdateSourceTrigger = PropertyChanged}" ScaleY="{Binding Path= Scale.CoefficientIncrease}"
+                                        x:Name="CanvasScaleTransform"></ScaleTransform>
                     </TransformGroup>
                 </Canvas.RenderTransform>
+
             </Canvas>
-        </StackPanel>
+            <TextBox  Text="{Binding Path = Scale.ScaleParam, UpdateSourceTrigger = PropertyChanged}" TextWrapping="Wrap" Margin="0,198,10,0" Height="35" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130"/>
+            <Grid Panel.ZIndex="101">
+                <ComboBox Text="{Binding Path = Scale.ScaleParam, Mode=TwoWay}" SelectedItem="{Binding str, Mode=TwoWay}"  x:Name="combobox" ItemsSource="{Binding ScallParam}" Margin="0,244,18,0" RenderTransformOrigin="0.342,-2.977" Height="31" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125">
+                </ComboBox>
+            </Grid>
+          
+
+        </Grid>
     </DockPanel>
 </Window>

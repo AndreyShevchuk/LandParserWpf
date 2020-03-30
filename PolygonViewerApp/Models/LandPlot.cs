@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 
+
 namespace PolygonViewerApp.Models
 {
-
     class LandInfo : INotifyPropertyChanged
     {
         string cadastralZoneNumber;
@@ -82,12 +82,92 @@ namespace PolygonViewerApp.Models
     class LandPlot
     {
         public static bool stat = true;
+        private List<System.Windows.Point> tempPints;
+        private List<System.Windows.Point> BestPoint { get; set; }
+        public System.Windows.Shapes.Polygon Polygon { get; set; }
         public LandInfo LandInfo { get; set; }
         public ICollection<System.Windows.Shapes.Polyline> Polylines { get; set; }
         public LandPlot(ICollection<System.Windows.Shapes.Polyline> polylines, LandInfo landInfo)
         {
             Polylines = polylines;
             LandInfo = landInfo;
+            tempPints = new List<System.Windows.Point>();
+
+            foreach (var polyline in polylines)
+            {
+                tempPints.AddRange(polyline.Points);
+            }
+
+            Polygon = new System.Windows.Shapes.Polygon
+            {
+                Stroke = Brushes.Red,
+                StrokeThickness = 2,
+                Points = new PointCollection()
+            };
+
+            GetSortPoint();
+        }
+
+        private void GetSortPoint()
+        {
+            var testpoliline = new List<System.Windows.Shapes.Polyline>();
+            foreach (var item in Polylines)
+            {
+                testpoliline.Add(item);
+            }
+
+            BestPoint = new List<System.Windows.Point>();
+
+            int flug = 0;
+            int index = 0;
+            while (BestPoint.Count != tempPints.Count)
+            {
+                if (BestPoint.Count == 0)
+                {
+                    BestPoint.AddRange(testpoliline[0].Points);
+                    testpoliline.RemoveAt(0);
+                }
+
+                System.Windows.Shapes.Polyline droppoliline;
+                foreach (var polyline in testpoliline)
+                {
+                    if (polyline.Points[flug].Equals(BestPoint[BestPoint.Count - 1]))
+                    {
+                        if(flug == 0)
+                        {
+                            BestPoint.AddRange(polyline.Points);
+                            testpoliline.Remove(polyline);
+                        }
+                        else
+                        {
+                            BestPoint.Add(polyline.Points[1]);
+                            BestPoint.Add(polyline.Points[0]);
+                            testpoliline.Remove(polyline);
+                        }
+
+                        index = 0;
+                        flug = 0;
+                        if (flug == 1)
+                        {
+                            flug = 0;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                }
+                if (index > 2)
+                {
+                    flug = 1;
+                }
+            }
+
+            foreach (var point in BestPoint)
+            {
+                Polygon.Points.Add(point);
+            }
         }
     }
 }
