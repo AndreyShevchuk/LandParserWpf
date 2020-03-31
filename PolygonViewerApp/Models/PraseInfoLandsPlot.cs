@@ -10,7 +10,6 @@ using PolygonViewerApp.Models;
 
 namespace PolygonViewerApp
 {
-
     class PraseInfoLandsPlot
     {
         public UkrainianCadastralExchangeFile data { get; set; }

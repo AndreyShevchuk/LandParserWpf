@@ -65,7 +65,7 @@
     <Compile Include="Models\LandPlot.cs" />
     <Compile Include="Models\Scale.cs" />
     <Compile Include="Models\ScaleCanvasParam.cs" />
-    <Compile Include="Models\ScaleTransformInfo.cs" />
+    <Compile Include="Models\Translate.cs" />
     <Compile Include="Models\XmlParser.cs" />
     <Compile Include="RelayCommands.cs" />
     <Compile Include="StaticMethodPoligon.cs" />

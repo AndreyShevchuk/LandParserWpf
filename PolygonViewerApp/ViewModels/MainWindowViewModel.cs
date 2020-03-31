@@ -9,14 +9,21 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace PolygonViewerApp.ViewModels
 {
+
+    //public delegate void CanavasSetZIndex(UIElement element, int value);
+    //public delegate int SetZIndex(UIElement element, int value)
+
     class MainWindowViewModel : INotifyPropertyChanged
     {
+        public Action<UIElement, int> CanvasSetZindexPanel;
+        public Func<UIElement, int> CanvasGetZindexPanel;
         public System.Windows.Point MouseLocation { get; set; }
         public UIElementCollection CanvasChildren { get; set; }
         public ObservableCollection<LandPlot> LandPlots { get; set; }
@@ -26,13 +33,14 @@ namespace PolygonViewerApp.ViewModels
         public RelayCommands OpenFile { get; set; }
         public Scale Scale { get; set; }
         public ScaleCanvasParam ScaleCanvasParam { get;set;}
-        public string str { get;
-            set; }
+        public string SelectedScal { get; set; }
         public ObservableCollection<string> ScallParam { get; set; }
+        public Translate Translate { get; set; }
+
 
         public MainWindowViewModel()
         {
-            str = "jhgjh";
+            SelectedScal = "jhgjh";
             ScallParam = new ObservableCollection<string>();
             ScallParam.Add("1:1");
             ScallParam.Add("1:100");
@@ -47,10 +55,9 @@ namespace PolygonViewerApp.ViewModels
             ScallParam.Add("1:200000");
             ScallParam.Add("1:300000");
             ScallParam.Add("1:500000");
-            ScallParam.Add("1:600000");
             ScallParam.Add("1:1000000");
 
-
+            this.Translate = new Translate();
             ScaleCanvasParam = new ScaleCanvasParam();
             Scale = new Scale();
             GetUIElement = new RelayCommands<UIElementCollection>((obj) => CanvasChildren = obj, (obj) => true);
@@ -71,18 +78,10 @@ namespace PolygonViewerApp.ViewModels
                 PraseInfoLandsPlot praseInfoLandsPlot = new PraseInfoLandsPlot(data);
                 LandPlots = new ObservableCollection<LandPlot>(praseInfoLandsPlot.GetLandPlots());
                 CanvasChildren.Clear();
-                CanvasChildren.AddRange(LandPlots.Select(e =>e.Polygon).ToList());
-                AddMousHendlerForPoligon();
+                CanvasChildren.AddRange(praseInfoLandsPlot.Polilines.Values.ToList());
+                AddMouseHandlr();
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-
         public void MouseWheelHandler(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta > 0)
@@ -95,18 +94,6 @@ namespace PolygonViewerApp.ViewModels
                 Scale.Decrease();
             }
         }
-
-        private void AddMousHendlerForPoligon()
-        {
-            foreach (var item in LandPlots)
-            {
-                item.Polygon.MouseDown += (s, e) =>
-                {
-                    item.Polygon.Stroke = Brushes.Black;
-                };
-            }
-        }
-
         private void AddMouseHandlr()
         {
             foreach (var item in LandPlots)
@@ -140,6 +127,12 @@ namespace PolygonViewerApp.ViewModels
                     };
                 }
             }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName]string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

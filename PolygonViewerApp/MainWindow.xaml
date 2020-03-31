@@ -6,8 +6,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:PolygonViewerApp"
         mc:Ignorable="d"
-        Title="Polygon Viewer App" WindowState="Maximized"
-        MouseMove="Canvas_MouseMove">
+        Title="Polygon Viewer App" WindowState="Maximized">
     <DockPanel>
         <Menu Panel.ZIndex="100" DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -18,7 +17,7 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Background="#0000" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="287*"/>
                 <RowDefinition Height="199*"/>
@@ -35,7 +34,7 @@
                             Кадастровый номер
                         </Paragraph>
                         <Paragraph>
-                            <TextBlock Text="{Binding Path = Scale.ScaleParam, UpdateSourceTrigger = PropertyChanged}" x:Name="Scale" Width="47"></TextBlock>
+                            <TextBlock Text="{Binding Path = Scale.ScaleParam, UpdateSourceTrigger = PropertyChanged}" x:Name="Scale"></TextBlock>
                             <TextBlock Text="{Binding Path = LandInfo.CadastralZoneNumber, UpdateSourceTrigger = PropertyChanged}" x:Name="CadastralZoneNumber"></TextBlock>
                             <TextBlock>:</TextBlock>
                             <TextBlock Text="{Binding Path = LandInfo.CadastralQuarterNumber, UpdateSourceTrigger = PropertyChanged}" x:Name="CadastralQuarterNumber"></TextBlock>
@@ -69,35 +68,38 @@
                 </RichTextBox.Document>
             </RichTextBox>
 
-            <Canvas Grid.Column="1" x:Name="Canvas"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="{Binding Path = ScaleCanvasParam.CenterX }" Height="{Binding Path = ScaleCanvasParam.CenterY }" Grid.RowSpan="2">
+                <Grid x:Name="panel" Background="#0000" Grid.Column="1"  Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-                <i:Interaction.Triggers>
+                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Canvas x:Name="Canvas"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="{Binding Path = ScaleCanvasParam.CenterX }" Height="{Binding Path = ScaleCanvasParam.CenterY }">
 
-                    <i:EventTrigger EventName="Loaded">
-                        <i:InvokeCommandAction 
-                        Command="{Binding GetUIElement}"
-                        CommandParameter="{Binding Children, ElementName=Canvas}" />
-                    </i:EventTrigger>
+                            <i:Interaction.Triggers>
 
-                </i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction 
+                                Command="{Binding GetUIElement}"
+                                CommandParameter="{Binding Children, ElementName=Canvas}" />
+                                </i:EventTrigger>
 
-                <Canvas.RenderTransform>
-                    <TransformGroup x:Name="TransformGroupe">
-                        <TranslateTransform x:Name="CanvasTranslateTransform"></TranslateTransform>
-                        <ScaleTransform CenterX="{Binding Path = ScaleCanvasParam.CenterX, UpdateSourceTrigger = PropertyChanged}" CenterY="{Binding Path = ScaleCanvasParam.CenterX}" 
-                                        ScaleX="{Binding Path= Scale.CoefficientIncrease, UpdateSourceTrigger = PropertyChanged}" ScaleY="{Binding Path= Scale.CoefficientIncrease}"
-                                        x:Name="CanvasScaleTransform"></ScaleTransform>
-                    </TransformGroup>
-                </Canvas.RenderTransform>
+                            </i:Interaction.Triggers>
 
-            </Canvas>
-            <TextBox  Text="{Binding Path = Scale.ScaleParam, UpdateSourceTrigger = PropertyChanged}" TextWrapping="Wrap" Margin="0,198,10,0" Height="35" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130"/>
+                            <Canvas.RenderTransform>
+                                <TransformGroup x:Name="TransformGroupe">
+                                    <TranslateTransform x:Name="CanvasTranslateTransform" X="{Binding Path = Translate.X,  UpdateSourceTrigger = PropertyChanged }" Y ="{Binding Path = Translate.Y,  UpdateSourceTrigger = PropertyChanged}"></TranslateTransform>
+                                    <ScaleTransform CenterX="{Binding Path = ScaleCanvasParam.CenterX, UpdateSourceTrigger = PropertyChanged}" CenterY="{Binding Path = ScaleCanvasParam.CenterX}" 
+                                                ScaleX="{Binding Path= Scale.CoefficientIncrease, UpdateSourceTrigger = PropertyChanged}" ScaleY="{Binding Path= Scale.CoefficientIncrease}"
+                                                x:Name="CanvasScaleTransform"></ScaleTransform>
+                                </TransformGroup>
+                            </Canvas.RenderTransform>
+
+                        </Canvas>
+                    </Grid>
+                </Grid>
+            <TextBox Text="{Binding Path = Scale.ScaleParam, UpdateSourceTrigger = PropertyChanged}" TextWrapping="Wrap" Margin="0,198,10,0" Height="35" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130"/>
             <Grid Panel.ZIndex="101">
-                <ComboBox Text="{Binding Path = Scale.ScaleParam, Mode=TwoWay}" SelectedItem="{Binding str, Mode=TwoWay}"  x:Name="combobox" ItemsSource="{Binding ScallParam}" Margin="0,244,18,0" RenderTransformOrigin="0.342,-2.977" Height="31" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125">
+                <ComboBox Text="{Binding Path = Scale.ScaleParam, Mode=TwoWay}" SelectedItem="{Binding SelectedScal, Mode=TwoWay}"  x:Name="combobox" ItemsSource="{Binding ScallParam}" Margin="0,244,18,0" RenderTransformOrigin="0.342,-2.977" Height="31" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125">
                 </ComboBox>
             </Grid>
-          
-
         </Grid>
     </DockPanel>
 </Window>

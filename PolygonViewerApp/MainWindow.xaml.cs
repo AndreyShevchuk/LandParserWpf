@@ -29,31 +29,19 @@ namespace PolygonViewerApp
             InitializeComponent();
             DataContext = viewModle;
             this.MouseWheel += viewModle.MouseWheelHandler;
+            viewModle.CanvasGetZindexPanel = GetZIndex;
+            viewModle.CanvasSetZindexPanel = SetZIndex;
+
+            panel.MouseDown += viewModle.Translate.MouseDoun;
+            panel.MouseMove += viewModle.Translate.MouseMuve;
         }
-
-        private System.Windows.Point lastMouseClick;
-
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        private void SetZIndex(UIElement e, int index)
         {
-            //if (e.LeftButton == MouseButtonState.Pressed)
-            //{
-
-            //    var position = e.GetPosition(null);
-
-            //    var md = 0.01;
-
-            //    var mdx = (position.X - lastMouseClick.X) * md;
-            //    var mdy = (position.Y - lastMouseClick.Y) * md;
-
-            //    dx += mdx;
-            //    dy += mdy;
-
-            //    CanvasTranslateTransform.X = (Width / 2) + dx;
-            //    CanvasTranslateTransform.Y = (Height / 2) + dy;
-
-            //    CanvasScaleTransform.CenterX = CanvasTranslateTransform.X;
-            //    CanvasScaleTransform.CenterY = CanvasTranslateTransform.Y;
-            //}
+            Canvas.SetZIndex(e, index);
+        }
+        private int GetZIndex(UIElement e)
+        {
+             return Canvas.GetZIndex(e);
         }
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {

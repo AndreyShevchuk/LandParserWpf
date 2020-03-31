@@ -11,8 +11,6 @@ namespace PolygonViewerApp.Models
 {
     class Scale : INotifyPropertyChanged
     {
-        private ObservableCollection<string> scallParamDefoult;
-
         private double _coefficientIncrease;
         public double CoefficientIncrease { get => _coefficientIncrease; 
             set { _coefficientIncrease = value; OnPropertyChanged("CoefficientIncrease"); } }
