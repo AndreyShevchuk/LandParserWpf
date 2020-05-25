@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,12 +17,12 @@ using System.Windows.Media;
 
 namespace PolygonViewerApp.ViewModels
 {
-
-    //public delegate void CanavasSetZIndex(UIElement element, int value);
-    //public delegate int SetZIndex(UIElement element, int value)
-
     class MainWindowViewModel : INotifyPropertyChanged
     {
+
+        private Cursor cursor;
+        private Cursor Cursor { get { return cursor; } set { cursor = value; } }
+
         public Action<UIElement, int> CanvasSetZindexPanel;
         public Func<UIElement, int> CanvasGetZindexPanel;
         public System.Windows.Point MouseLocation { get; set; }
@@ -30,17 +31,43 @@ namespace PolygonViewerApp.ViewModels
         private LandPlot selecLandPlot;
         public LandPlot SelecLandPlot { get { return selecLandPlot; } set { selecLandPlot = value; OnPropertyChanged("SelecLandPlot"); } }
         public RelayCommands<UIElementCollection> GetUIElement { get; set; }
+
+        private RelayCommands<Object> enlargeCommands;
+        public RelayCommands<Object> decreaseCommands;
+
+
+        public RelayCommands<Object> EnlargeCommands
+        {
+            get
+            {
+                return enlargeCommands;
+            }
+            set
+            {
+                enlargeCommands = value;
+            }
+        }  
+        public RelayCommands<Object> DecreaseCommands
+        {
+            get
+            {
+                return decreaseCommands;
+            }
+            set
+            {
+                enlargeCommands = value;
+            }
+        }
         public RelayCommands OpenFile { get; set; }
         public Scale Scale { get; set; }
         public ScaleCanvasParam ScaleCanvasParam { get;set;}
-        public string SelectedScal { get; set; }
+        public string SelectedScal { get; set; } = "";
         public ObservableCollection<string> ScallParam { get; set; }
         public Translate Translate { get; set; }
 
 
         public MainWindowViewModel()
         {
-            SelectedScal = "jhgjh";
             ScallParam = new ObservableCollection<string>();
             ScallParam.Add("1:1");
             ScallParam.Add("1:100");
@@ -62,6 +89,8 @@ namespace PolygonViewerApp.ViewModels
             Scale = new Scale();
             GetUIElement = new RelayCommands<UIElementCollection>((obj) => CanvasChildren = obj, (obj) => true);
             OpenFile = new RelayCommands(ParseXmlFile);
+            enlargeCommands = new RelayCommands<Object>((obj) => Scale.Enlarge(1.3),(obj) => true);
+            decreaseCommands = new RelayCommands<Object>((obj) => Scale.Decrease(1.3), (obj) => true);
         }
   
         private void ParseXmlFile()
@@ -75,25 +104,40 @@ namespace PolygonViewerApp.ViewModels
             if (openFileDialog.ShowDialog() == true)
             {
                 var data = XmlParser<UkrainianCadastralExchangeFile>.ParseFile(openFileDialog.FileName);
+                
                 PraseInfoLandsPlot praseInfoLandsPlot = new PraseInfoLandsPlot(data);
                 LandPlots = new ObservableCollection<LandPlot>(praseInfoLandsPlot.GetLandPlots());
                 CanvasChildren.Clear();
-                CanvasChildren.AddRange(praseInfoLandsPlot.Polilines.Values.ToList());
-                AddMouseHandlr();
-            }
-        }
-        public void MouseWheelHandler(object sender, MouseWheelEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                Scale.Enlarge();
-            }
 
-            if (e.Delta < 0)
-            {
-                Scale.Decrease();
+                /////////////////////
+                //CanvasChildren.AddRange(praseInfoLandsPlot.Polilines.Values.ToList());
+                //AddMouseHandlr();
+
+
+                //////////////////   Не працює коректно
+
+                var tr = LandPlots.Select(e => e.Polygon).ToList();
+
+                foreach (var item in LandPlots)
+                {
+                    item.Polygon.MouseUp += (s, e) =>
+                    {
+                        SelecLandPlot = item;
+                        foreach (var item2 in LandPlots)
+                        {
+                            item2.Polygon.Fill = Brushes.White;
+                        }
+                        item.Polygon.Fill = Brushes.Gray;
+
+                    };
+                    
+                }
+                CanvasChildren.AddRange(tr);
             }
         }
+
+
+
         private void AddMouseHandlr()
         {
             foreach (var item in LandPlots)

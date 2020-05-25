@@ -18,6 +18,11 @@ namespace PolygonViewerApp.Models
                 data = (T)formatter.Deserialize(fs);    
             }
             return data;
+
+            var test = new List<int>();
+            var test2 = new HashSet<int>();
+
+            var res = test[1];
         }
     }
 }

@@ -121,5 +121,9 @@
   <ItemGroup>
     <Folder Include="View\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="DataFiles\1581410554896340.xml" />
+    <Resource Include="DataFiles\6310138800040100000 %28М%29.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

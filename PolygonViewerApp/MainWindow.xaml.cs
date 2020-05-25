@@ -28,12 +28,16 @@ namespace PolygonViewerApp
             var viewModle = new MainWindowViewModel();
             InitializeComponent();
             DataContext = viewModle;
-            this.MouseWheel += viewModle.MouseWheelHandler;
+            this.MouseWheel += viewModle.Scale.MouseWheelHandler;
+            this.MouseDown += viewModle.Scale.MouseDoun;
+
             viewModle.CanvasGetZindexPanel = GetZIndex;
             viewModle.CanvasSetZindexPanel = SetZIndex;
 
             panel.MouseDown += viewModle.Translate.MouseDoun;
+
             panel.MouseMove += viewModle.Translate.MouseMuve;
+
         }
         private void SetZIndex(UIElement e, int index)
         {

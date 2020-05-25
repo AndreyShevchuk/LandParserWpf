@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PolygonViewerApp.Models
 {
@@ -34,6 +35,8 @@ namespace PolygonViewerApp.Models
         private double comparativeSize;
         private string scaleParam;
 
+       
+
         public Scale()
         {
             scaleParam = "";
@@ -51,6 +54,35 @@ namespace PolygonViewerApp.Models
         {
             CoefficientIncrease /= xZoom;
             OnPropertyChanged("ScaleParam");
+        }
+
+        public void MouseWheelHandler(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                this.Enlarge();
+            }
+
+            if (e.Delta < 0)
+            {
+                this.Decrease();
+            }
+        }
+
+        public void MouseDoun(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    this.Enlarge(1.5);
+                }
+
+                if (e.RightButton == MouseButtonState.Pressed)
+                {
+                    this.Decrease(1.5);
+                }
+            }
         }
 
         private void SetScaleParam(double value)

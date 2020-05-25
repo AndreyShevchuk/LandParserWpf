@@ -103,8 +103,7 @@ namespace PolygonViewerApp.Models
                 Stroke = Brushes.Red,
                 StrokeThickness = 2,
                 Points = new PointCollection(),
-                
-                
+                Fill = Brushes.White,
             };
 
             GetSortPoint();
